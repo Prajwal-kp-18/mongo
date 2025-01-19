@@ -27,28 +27,28 @@ export const generatePasswordResetToken = async (email: string) => {
   return passwordResetToken;
 };
 
-export const generateVerificationToken = async (email: string) => {
-  const token = uuidv4();
+// export const generateVerificationToken = async (email: string) => {
+//   const token = uuidv4();
 
-  const expires = new Date(new Date().getTime() + 3600 * 1000);
+//   const expires = new Date(new Date().getTime() + 3600 * 1000);
 
-  const existingToken = await getVerificationTokenByEmail(email);
+//   const existingToken = await getVerificationTokenByEmail(email);
 
-  if (existingToken) {
-    await db.verificationToken.delete({
-      where: {
-        id: existingToken.id,
-      },
-    });
-  }
+//   if (existingToken) {
+//     await db.verificationToken.delete({
+//       where: {
+//         id: existingToken.id,
+//       },
+//     });
+//   }
 
-  const verificationToken = await db.verificationToken.create({
-    data: {
-      email,
-      token,
-      expires,
-    },
-  });
+//   const verificationToken = await db.verificationToken.create({
+//     data: {
+//       email,
+//       token,
+//       expires,
+//     },
+//   });
 
-  return verificationToken;
-};
+//   return verificationToken;
+// };

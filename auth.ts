@@ -27,12 +27,6 @@ export const {
       // allow Oauth without verifying
       if (account?.provider !== "credentials") return true;
 
-      const existingUser = await getUserById(user.id!);
-
-      // prevent singin without verifying
-      if (!existingUser?.emailVerified) return false;
-      // add 2fa check
-
       return true;
     },
     async session({ token, session }) {
