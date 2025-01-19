@@ -1,8 +1,9 @@
 import NextAuth from "next-auth";
-import { PrismaAdapter } from "@auth/prisma-adapter";
-import { db } from "@/lib/db";
-import { getUserById } from "./data/user";
+import { MongoDBAdapter } from "@auth/mongodb-adapter";
+import client from "@/lib/db";
+import { getUserById, updateEmailVerified } from "./data/user";
 import authConfig from "./auth.config";
+import UserModel from "./models/User";
 
 export const {
   handlers: { GET, POST },
@@ -16,10 +17,7 @@ export const {
   },
   events: {
     async linkAccount({ user }) {
-      await db.user.update({
-        where: { id: user.id },
-        data: { emailVerified: new Date() },
-      });
+      await UserModel.findByIdAndUpdate(user.id, { emailVerified: new Date() });
     },
   },
   callbacks: {
@@ -29,13 +27,14 @@ export const {
 
       return true;
     },
+
     async session({ token, session }) {
       if (token.sub && session.user) {
         session.user.id = token.sub;
       }
 
       if (token.role && session.user) {
-        session.user.role = token.role;
+        session.user.role = (token.role as "ADMIN") || "USER";
       }
       return session;
     },
@@ -46,11 +45,10 @@ export const {
       if (!existingUser) return token;
 
       token.role = existingUser.role;
-
       return token;
     },
   },
-  adapter: PrismaAdapter(db),
+  adapter: MongoDBAdapter(client),
   session: { strategy: "jwt" },
   ...authConfig,
 });

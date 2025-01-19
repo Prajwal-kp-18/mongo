@@ -1,12 +1,15 @@
 "use server";
 
 import bcrypt from "bcryptjs";
-import { db } from "@/lib/db";
 import * as z from "zod";
+import connectMongoDB from "../src/lib/dbConnect";
+import UserModel from "../models/User";
 import { RegisterSchema } from "../schemas";
 import { getUserByEmail } from "../data/user";
 
 export const register = async (values: z.infer<typeof RegisterSchema>) => {
+  await connectMongoDB(); // Ensure the database is connected
+
   const validatedFields = RegisterSchema.safeParse(values);
 
   if (!validatedFields.success) {
@@ -22,13 +25,17 @@ export const register = async (values: z.infer<typeof RegisterSchema>) => {
     return { error: "Email already exists" };
   }
 
-  await db.user.create({
-    data: { email, password: hashedPassword, name },
-  });
+  try {
+    // Create the user in the database
+    await UserModel.create({
+      email,
+      password: hashedPassword,
+      name,
+    });
 
-  // const verificationToken = await generateVerificationToken(email);
-
-  // await sendVerificationEmail(verificationToken.email, verificationToken.token);
-
-  return { success: "Account created succesfully" };
+    return { success: "Account created successfully" };
+  } catch (error) {
+    console.error("Error creating user:", error);
+    return { error: "Something went wrong, please try again." };
+  }
 };

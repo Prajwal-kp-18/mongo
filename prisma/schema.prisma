@@ -23,9 +23,7 @@ model User {
   image         String?
   password      String?
   role          UserRole @default(USER)
-  accounts      Account[]
- 
- 
+  accounts      Account[] 
 }
 model Account {
   id                 String  @id @default(cuid())
