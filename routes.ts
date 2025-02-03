@@ -33,7 +33,7 @@ export const authRoutes = [
 export const apiAuthPrefix = "/api/auth";
 
 /*
-  Define your default login redirect path here. This is the path that users will be redirected to after logging in.
+  Define your default login ct path here. This is the path that users will be redirected to after logging in.
 
   For example:
 

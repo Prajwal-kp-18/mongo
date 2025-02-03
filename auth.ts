@@ -17,7 +17,9 @@ export const {
   },
   events: {
     async linkAccount({ user }) {
-      await UserModel.findByIdAndUpdate(user.id, { emailVerified: new Date() });
+      await UserModel.findByIdAndUpdate(user.id, {
+        emailVerified: new Date(),
+      });
     },
   },
   callbacks: {
